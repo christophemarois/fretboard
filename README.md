@@ -20,5 +20,11 @@ For a long time, I've wanted a fretboard diagram builder with extensive flexibil
 * String names (optional, great to convey the tuning or transposition of a chord, or whether the chord is in left-handed mode)
 * Variable string count
 * Minimum frets per diagram
+* Chord catalog for Ukulele and Guitar, with chord name functions precomputed + support for transposed tunings.
+* PWA with offline use
 
-It also packages a chord catalog for Ukulele and Guitar, with chord name functions precomputed + support for transposed tunings.
+### Upcoming
+
+* Mobile layout
+* State preservation across refreshes
+* Better chord catalog selection
