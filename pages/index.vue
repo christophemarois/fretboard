@@ -5,9 +5,17 @@
         <div class="column col-8">
           <h1>Fretboard Diagram Builder</h1>
 
-          <div v-if="!closedNewsIds.includes(1)" class="toast toast-success">
-            <button class="btn btn-clear float-right" @click="closedNewsIds.push(1)"></button>
-            <b>News:</b> Transposition added for Catalog chords + String names (useful for transposed catalog chords)
+          <div>
+            <a class="github-button" href="https://github.com/christophemarois/fretboard" data-show-count="true" aria-label="Star christophemarois/fretboard on GitHub">Star</a>
+            <a class="github-button" href="https://github.com/christophemarois/fretboard/issues" data-show-count="true" aria-label="Issue christophemarois/fretboard on GitHub">Issue</a>
+          </div>
+
+          <div v-if="!closedNewsIds.includes(2)" class="toast toast-success" style="margin-top: 1rem">
+            <button class="btn btn-clear float-right" @click="closedNewsIds.push(2)"></button>
+            <code>2019/08/18</code>
+            <a href="https://github.com/christophemarois/fretboard" target="_blank">Open-sourced</a>
+            and now available as an offline PWA (can be installed and used offline on Chrome >=73,
+            latest iOS Safari, and others). Also, fixed some fonts issues in the diagram.
           </div>
 
           <div class="divider" style="margin: 1rem 0"></div>
@@ -106,7 +114,7 @@
             </div>
             <div class="form-group form-inline">
               <label class="form-label" for="stringNames"><b>String names</b><br/>e.g. <span class="label">G#,C#,E#,A#</span></label>
-              <input id="stringNames" type="text" v-model.trim="stringNames" class="form-input" pattern="[A-Z,]+" @input="clearCatalog" />
+              <input id="stringNames" type="text" v-model.trim="stringNames" class="form-input" pattern="[A-Z,b#]+" @input="clearCatalog" />
             </div>
           </div>
         </div>
@@ -180,7 +188,7 @@ export default {
       leftHanded: false,
       stringNames: 'G,C,E,A',
       transpositionI: 0,
-      closedNewsIds: [1],
+      closedNewsIds: [1, 2],
     }
   },
   computed: {

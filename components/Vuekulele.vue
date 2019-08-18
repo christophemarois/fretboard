@@ -16,7 +16,11 @@
       :width="svgWidth"
       :height="svgHeight"
       :viewBox="`0 0 ${svgWidth} ${svgHeight}`"
-      style="font-family: sans-serif; font-size: 11px; display: none;"
+      style="font-size: 11px;"
+      :style="{
+        'display': isSVGDev ? 'block' : 'none',
+        'font-family': fontFamily,
+      }"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
@@ -25,7 +29,8 @@
         :x="svgWidth / 2"
         :y="fontSize"
         text-anchor="middle"
-        :style="`font-size: ${fontSize}px;`"
+        :style="`font-size: ${fontSize}px; font-weight: bold`"
+        :font-family="fontFamily"
         v-html="formatChord(chord || '')"
       ></text>
 
@@ -40,6 +45,7 @@
           :y="caseSize / 2 + (fontSize * fontScale) * 0.5"
           :style="`font-size: ${fontSize * fontScale}px;`"
           text-anchor="middle"
+          :font-family="fontFamily"
         >
           {{ position }}
         </text>
@@ -86,6 +92,7 @@
                 v-if="fret === 'x'"
                 :style="`font-size: ${fontSize}px;`"
                 :transform="`translate(${-1 * fontSize * 0.3}, ${fontSize * 0.3})`"
+                :font-family="fontFamily"
               >×</text>
 
               <rect
@@ -107,9 +114,10 @@
                 v-if="fret > 0"
                 fill="white"
                 class="fingering"
-                :y="{ small: 3, medium: 4, large: 5, giant: 7 }[size]"
+                :y="{ small: 3, medium: 4, large: 6, giant: 7 }[size]"
                 text-anchor="middle"
                 :style="`font-size: ${fontSize * fontScale}px; font-weight: bold`"
+                :font-family="fontFamily"
               >{{ _fingerings[i] }}</text>
             </g>
           </template>
@@ -126,13 +134,14 @@
             :x="i * caseSize"
             text-anchor="middle"
             v-text="name"
+            :font-family="fontFamily"
           ></text>
         </g>
 
         <g
           class="subText"
           :transform="`translate(1,${fretsCount * caseSize + fontSize * (_stringNames.length > 0 ? 2 : 1.5)})`"
-          :style="`font-size: ${fontSize}px; font-weight: bold`"
+          :style="`font-size: ${fontSize}px; font-weight: 600`"
         >
           <text
             v-for="(_, i) in Array(strings)"
@@ -140,6 +149,7 @@
             :x="i * caseSize"
             text-anchor="middle"
             v-html="formatInterval(_functions[i] || '')"
+            :font-family="fontFamily"
           ></text>
         </g>
       </g>
@@ -228,6 +238,16 @@
         validator (val) {
           return /^[A-Zb#,]*$/.test(val)
         }
+      },
+
+      fontFamily: {
+        type: String,
+        default: `-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif`,
+      },
+
+      isSVGDev: {
+        type: Boolean,
+        default: false,
       }
     },
 

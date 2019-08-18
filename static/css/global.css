@@ -16,3 +16,7 @@ html {
   box-sizing: border-box;
   margin: 0;
 }
+
+@media all and (display-mode: standalone) {
+  .hidden-in-standalone { display: none }
+}
