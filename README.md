@@ -25,6 +25,8 @@ For a long time, I've wanted a fretboard diagram builder with extensive flexibil
 
 ### Upcoming
 
+* Note names from catalog
+* Fix tuning enharmonics
 * Mobile layout
 * Diagram font fixes + fixes to alterations (♯♭)
 * State preservation across refreshes
