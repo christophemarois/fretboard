@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#F78B3D" offset="0%"></stop>
+            <stop stop-color="#F42282" offset="100%"></stop>
+        </linearGradient>
+        <radialGradient cx="50%" cy="100%" fx="50%" fy="100%" r="100%" gradientTransform="translate(0.500000,1.000000),scale(0.329502,1.000000),rotate(-90.000000),scale(1.000000,1.548320),translate(-0.500000,-1.000000)" id="radialGradient-2">
+            <stop stop-color="#FFFFFF" stop-opacity="0.0931272645" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.263530344" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50%" cy="100%" fx="50%" fy="100%" r="100%" gradientTransform="translate(0.500000,1.000000),scale(0.329502,1.000000),rotate(-90.000000),scale(1.000000,1.197987),translate(-0.500000,-1.000000)" id="radialGradient-3">
+            <stop stop-color="#FFFFFF" stop-opacity="0.227043705" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.418081975" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50%" cy="100%" fx="50%" fy="100%" r="100%" gradientTransform="translate(0.500000,1.000000),scale(0.329502,1.000000),rotate(-90.000000),scale(1.000000,1.197987),translate(-0.500000,-1.000000)" id="radialGradient-4">
+            <stop stop-color="#FFFFFF" stop-opacity="0.33276721" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.649739583" offset="100%"></stop>
+        </radialGradient>
+        <radialGradient cx="50%" cy="100%" fx="50%" fy="100%" r="100%" gradientTransform="translate(0.500000,1.000000),scale(0.329502,1.000000),rotate(-90.000000),translate(-0.500000,-1.000000)" id="radialGradient-5">
+            <stop stop-color="#FFFFFF" stop-opacity="0.609969429" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0.803442029" offset="100%"></stop>
+        </radialGradient>
+        <path d="M14.9864671,15.3923053 L14.9864671,13.1240809 C17.1246418,12.9158853 18.6158592,12.5679848 19.4601641,12.0803689 C20.304469,11.592753 20.9349469,10.4394766 21.3516169,8.62050494 L23.6871498,8.62050494 L23.6871498,32.0588235 L20.5292461,32.0588235 L20.5292461,15.3923053 L14.9864671,15.3923053 Z" id="path-6"></path>
+    </defs>
+    <g id="Icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Background" fill="url(#linearGradient-1)" x="0" y="0" width="512" height="512"></rect>
+        <g id="Diagram" transform="translate(125.000000, 84.000000)">
+            <g id="Frosted-BG" transform="translate(1.000000, 1.000000)" fill-rule="nonzero">
+                <rect id="Rectangle" fill="url(#radialGradient-2)" x="0" y="257" width="261" height="86"></rect>
+                <rect id="Rectangle" fill="url(#radialGradient-3)" x="0" y="173" width="261" height="86"></rect>
+                <rect id="Rectangle" fill="url(#radialGradient-4)" x="0" y="89" width="261" height="86"></rect>
+                <rect id="Rectangle" fill="url(#radialGradient-5)" x="0" y="0" width="261" height="86"></rect>
+            </g>
+            <g id="Vertical" transform="translate(0.832117, 0.431373)" fill="#000000">
+                <rect id="Rectangle" x="0" y="0" width="4.27737226" height="341.960784"></rect>
+                <rect id="Rectangle" x="85.5474453" y="0" width="4.27737226" height="341.960784"></rect>
+                <rect id="Rectangle" x="171.094891" y="0" width="4.27737226" height="341.960784"></rect>
+                <rect id="Rectangle" x="256.642336" y="0" width="4.27737226" height="341.960784"></rect>
+            </g>
+            <g id="Horizontal" transform="translate(0.832117, 0.431373)" fill="#000000">
+                <rect id="Rectangle" x="0" y="0" width="260.919708" height="4.2745098"></rect>
+                <rect id="Rectangle" x="0" y="85.4901961" width="260.919708" height="4.2745098"></rect>
+                <rect id="Rectangle" x="0" y="170.980392" width="260.919708" height="4.2745098"></rect>
+                <rect id="Rectangle" x="0" y="256.470588" width="260.919708" height="4.2745098"></rect>
+                <rect id="Rectangle" x="0" y="341.960784" width="260.919708" height="4.2745098"></rect>
+            </g>
+            <g id="Note" transform="translate(238.226277, 26.078431)">
+                <ellipse id="Oval" fill="#000000" cx="21.3868613" cy="21.372549" rx="21.3868613" ry="21.372549"></ellipse>
+                <g id="1">
+                    <use fill="#000000" xlink:href="#path-6"></use>
+                    <use fill="#FFFFFF" xlink:href="#path-6"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
