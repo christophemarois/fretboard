@@ -54,5 +54,13 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  workbox: {
+    offlineAssets: ['/css/global.css']
+  },
+  manifest: {
+    name: 'Fretboard Diagram Builder',
+    short_name: 'Fretboard',
+    lang: 'en'
   }
 }
