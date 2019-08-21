@@ -10,7 +10,13 @@
             <a class="github-button" href="https://github.com/christophemarois/fretboard/issues" data-show-count="true" aria-label="Issue christophemarois/fretboard on GitHub">Issue</a>
           </div>
 
-          <div v-if="!closedNewsIds.includes(2)" class="toast toast-success" style="margin-top: 1rem">
+          <div v-if="!closedNewsIds.includes(3)" class="toast" style="margin-top: 1rem">
+            <button class="btn btn-clear float-right" @click="closedNewsIds.push(3)"></button>
+            <code>2019/08/20</code>
+            Better chord catalog UI, better transposition enharmonics.
+          </div>
+          
+          <div v-if="!closedNewsIds.includes(2)" class="toast" style="margin-top: 1rem">
             <button class="btn btn-clear float-right" @click="closedNewsIds.push(2)"></button>
             <code>2019/08/18</code>
             <a href="https://github.com/christophemarois/fretboard" target="_blank">Open-sourced</a>
@@ -18,103 +24,133 @@
             latest iOS Safari, and others). Also, fixed some fonts issues in the diagram.
           </div>
 
-          <div class="divider" style="margin: 1rem 0"></div>
+          <ul class="tab" style="margin: 1rem 0">
+            <li class="tab-item">
+              <a href="#" :class="{ active: mode === 'catalog' }" @click.prevent="mode = 'catalog'">Automatic</a>
+            </li>
 
-          <h3>Catalog</h3>
+            <li class="tab-item">
+              <a href="#" :class="{ active: mode === 'manual' }" @click.prevent="mode = 'manual'">Manual</a>
+            </li>
+          </ul>
 
-          <div>
-            <div class="form-group form-inline">
-              <label class="form-label"><b>Instrument</b></label>
+          <div v-if="mode === 'catalog'">
+            <div>
+              <div class="form-group form-inline">
+                <label class="form-label"><b>Instrument</b></label>
 
-              <div class="btn-group">
-                <button class="btn" :class="{ 'active': instrument === 'ukulele' }" @click="instrument = 'ukulele'">Ukulele</button>
-                <button class="btn" :class="{ 'active': instrument === 'guitar' }" @click="instrument = 'guitar'">Guitar</button>
+                <div class="btn-group">
+                  <button class="btn" :class="{ 'active': catalogInstrument === 'ukulele' }" @click="catalogInstrument = 'ukulele'">Ukulele</button>
+                  <button class="btn" :class="{ 'active': catalogInstrument === 'guitar' }" @click="catalogInstrument = 'guitar'">Guitar</button>
+                </div>
               </div>
-            </div>
-            
-            <div class="form-group form-inline" style="margin-left: 0.5rem">
-              <label class="form-label" for="transposition"><b>Transposition</b></label>
+              
+              <div class="form-group form-inline" style="margin-left: 0.5rem">
+                <label class="form-label" for="transposition"><b>Transposition</b></label>
 
-              <select name="transposition" class="form-select form-input" v-model.number="transpositionI" style="width: auto;" aria-placeholder="Select Chord">
-                <option v-for="transposition in transpositions" :key="'transposition' + transposition.i" :value="transposition.i">
-                  +{{ transposition.i }}: {{ transposition.name }}{{ transposition.alias && ` (${transposition.alias})` }}
-                </option>
-              </select>
-            </div>
-            
-            <div class="form-group form-inline" style="margin-left: 0.5rem">
-              <label class="form-label" for="catalogChord"><b>Chord</b></label>
+                <select name="transposition" class="form-select form-input" v-model.number="transpositionI" style="width: auto;">
+                  <option v-for="transposition in transpositions" :key="'transposition' + transposition.i" :value="transposition.i">
+                    +{{ transposition.i }}: {{ transposition.name }}{{ transposition.alias && ` (${transposition.alias})` }}
+                  </option>
+                </select>
+              </div>
 
-              <select name="catalogChord" class="form-select form-input" v-model="catalogChordName" style="width: auto;" aria-placeholder="Select Chord">
-                <option v-for="catalogChord in catalogChords" :key="catalogChord.name">{{ catalogChord.name }}</option>
-              </select>
-            </div>
-            
-            <div v-if="transposedChord" class="form-group form-inline" style="margin-left: 0.5rem">
-              <label class="form-label" for="catalogChord"><b>Variants</b></label>
-
-              <div class="btn-group">
-                <button
-                  v-for="(diagrams, i) in transposedChord.diagrams"
-                  :key="'catalog-diagram-' + i"
-                  class="btn"
-                  :class="{ 'active': diagramI === i }"
-                  @click="diagramI = i"
-                >{{ i + 1 }}</button>
+              <div class="form-group form-inline" style="margin-left: 0.5rem">
+                <label class="form-switch">
+                  <input type="checkbox" v-model="leftHanded">
+                  <i class="form-icon"></i> Left-handed
+                </label>
               </div>
             </div>
 
-            <div class="form-group" style="margin-top: 0.5rem">
-              <label class="form-switch">
-                <input type="checkbox" v-model="leftHanded">
-                <i class="form-icon"></i> Left-handed mode
-              </label>
+            <div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="catalogChord"><b>Root</b></label>
+
+                <div style="margin: -0.25rem 0 0 -0.25rem">
+                  <button
+                    v-for="note in notes"
+                    :key="'catalog-root-' + note.name"
+                    class="btn"
+                    :class="{ 'active': catalogRoot === note.name }"
+                    @click="catalogRoot = note.name"
+                    style="margin: 0.25rem 0 0 0.25rem"
+                  >
+                    {{ note.name + (note.alt ? `/${note.alt}` : '') }}
+                  </button>
+                </div>
+              </div>
+              
+              <div class="form-group form-inline">
+                <label class="form-label" for="catalogChord">
+                  <b>Quality</b>
+                </label>
+                
+                <div style="margin-top: -0.5rem" />
+
+                <div v-for="group in qualityGroups" :key="`catalog-quality-${group.name}`">
+                  <div style="margin-top: 0.5rem">{{ group.name }}</div>
+
+                  <div style="margin: 0 0 0 -0.25rem">
+                    <button
+                      v-for="quality in group.qualities"
+                      :key="'catalog-quality-' + quality.name"
+                      class="btn"
+                      :class="{ 'active': catalogQuality === quality.name }"
+                      @click="catalogQuality = quality.name"
+                      style="margin: 0.25rem 0 0 0.25rem"
+                    >
+                      {{ quality.name + (quality.alt ? `, ${quality.alt.join(', ')}` : '') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          
+          <div v-if="mode === 'manual'">
+            <h3>Chord</h3>
 
-          <div class="divider" style="margin: 1rem 0"></div>
+            <div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="name"><b>Name</b><br/>e.g. <span class="label">Bbmaj7</span></label>
+                <input id="name" type="text" v-model="name" class="form-input" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="position"><b>Position</b><br/>e.g. <span class="label">1</span></label>
+                <input id="position" type="number" v-model.number="position" class="form-input" min="0" step="1" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="frets"><b>Frets</b><br/>e.g. <span class="label">0001</span> or <span class="label">0x01</span></label>
+                <input id="frets" type="text" v-model="frets" class="form-input" pattern="[\dx]+" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="functions"><b>Functions</b><br/>e.g. <span class="label">b7,5,3,1</span></label>
+                <input id="functions" type="text" v-model="functions" class="form-input" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="fingerings"><b>Fingerings</b><br/>e.g. <span class="label">0001</span></label>
+                <input id="fingerings" type="text" v-model="fingerings" class="form-input" pattern="\d+" @input="clearCatalog" />
+              </div>
+            </div>
 
-          <h3>Chord</h3>
+            <div class="divider" style="margin: 1rem 0"></div>
 
-          <div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="name"><b>Name</b><br/>e.g. <span class="label">Bbmaj7</span></label>
-              <input id="name" type="text" v-model="name" class="form-input" @input="clearCatalog" />
-            </div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="position"><b>Position</b><br/>e.g. <span class="label">1</span></label>
-              <input id="position" type="number" v-model.number="position" class="form-input" min="0" step="1" @input="clearCatalog" />
-            </div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="frets"><b>Frets</b><br/>e.g. <span class="label">0001</span> or <span class="label">0x01</span></label>
-              <input id="frets" type="text" v-model="frets" class="form-input" pattern="[\dx]+" @input="clearCatalog" />
-            </div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="functions"><b>Functions</b><br/>e.g. <span class="label">b7,5,3,1</span></label>
-              <input id="functions" type="text" v-model="functions" class="form-input" @input="clearCatalog" />
-            </div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="fingerings"><b>Fingerings</b><br/>e.g. <span class="label">0001</span></label>
-              <input id="fingerings" type="text" v-model="fingerings" class="form-input" pattern="\d+" @input="clearCatalog" />
-            </div>
-          </div>
+            <h3>Fretboard</h3>
 
-          <div class="divider" style="margin: 1rem 0"></div>
-
-          <h3>Fretboard</h3>
-
-          <div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="strings"><b>Strings</b><br/>e.g. <span class="label">4</span></label>
-              <input id="strings" type="number" v-model.number="strings" class="form-input" min="0" step="1" @input="clearCatalog" />
-            </div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="minimumFrets"><b>Minimum frets</b><br/>e.g. <span class="label">4</span></label>
-              <input id="minimumFrets" type="number" v-model.number="minimumFrets" class="form-input" min="0" step="1" @input="clearCatalog" />
-            </div>
-            <div class="form-group form-inline">
-              <label class="form-label" for="stringNames"><b>String names</b><br/>e.g. <span class="label">G#,C#,E#,A#</span></label>
-              <input id="stringNames" type="text" v-model.trim="stringNames" class="form-input" pattern="[A-Z,b#]+" @input="clearCatalog" />
+            <div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="strings"><b>Strings</b><br/>e.g. <span class="label">4</span></label>
+                <input id="strings" type="number" v-model.number="strings" class="form-input" min="0" step="1" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="minimumFrets"><b>Minimum frets</b><br/>e.g. <span class="label">4</span></label>
+                <input id="minimumFrets" type="number" v-model.number="minimumFrets" class="form-input" min="0" step="1" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="stringNames"><b>String names</b><br/>e.g. <span class="label">G#,C#,E#,A#</span></label>
+                <input id="stringNames" type="text" v-model.trim="stringNames" class="form-input" pattern="[A-Z,b#]+" @input="clearCatalog" />
+              </div>
             </div>
           </div>
         </div>
@@ -134,6 +170,21 @@
               :svgMode="svgMode"
               :stringNames="stringNames"
             ></vuekulele>
+          </div>
+
+          <div v-if="transposedChord" class="form-group" style="margin-top: 1rem; text-align: center;">
+            <label class="form-label" for="catalogChord"><b>Variants</b></label>
+
+            <div>
+              <button
+                v-for="(diagrams, i) in transposedChord.diagrams"
+                :key="'catalog-diagram-' + i"
+                class="btn"
+                :class="{ 'active': diagramI === i }"
+                @click="diagramI = i"
+                style="margin: 0.25rem 0 0 0.25rem"
+              >{{ i + 1 }}</button>
+            </div>
           </div>
 
           <div>
@@ -164,8 +215,8 @@
 <script>
 import Vuekulele from '~/components/Vuekulele.vue'
 
-import { notes, qualities, instruments } from '~/data/entries.json'
-import chords from '~/data/chords.json'
+import { notes, qualityGroups, instruments } from '~/data/entries.json'
+import chords from '~/data/chords2.json'
 
 const mod = (num, mod) => ((num % mod) + mod) % mod
 
@@ -173,6 +224,16 @@ export default {
   components: { Vuekulele },
   data () {
     return {
+      notes,
+      qualityGroups,
+      instruments,
+
+      mode: 'catalog',
+
+      catalogInstrument: 'ukulele',
+      catalogRoot: 'C',
+      catalogQuality: null,
+
       strings: 4,
       name: 'C7',
       position: 0,
@@ -180,65 +241,41 @@ export default {
       functions: '5,1,3,b7',
       fingerings: '0001',
       minimumFrets: 4,
-      size: 'large',
+      size: 'medium',
       svgMode: true,
-      instrument: 'ukulele',
-      catalogChordName: '',
       diagramI: 0,
       leftHanded: false,
       stringNames: 'G,C,E,A',
       transpositionI: 0,
-      closedNewsIds: [1, 2],
+      closedNewsIds: [1, 2, 3],
     }
   },
   computed: {
-    catalogChords () {
-      return Object.values(chords[this.instrument] || {}).flatMap(rootChords => {
-        return Object.entries(rootChords).map(([name, diagrams]) => ({ name, diagrams }))
-      })
-    },
-    catalogChord () {
-      return this.catalogChords.find(catalogChord => catalogChord.name === this.catalogChordName)
-    },
     transpositions () {
-      const instrument = instruments.find(instrument => instrument.name === this.instrument)
-
-      if (!instrument) return []
-
-      const noteNames = notes.map(note => note.name)
-      const semitones = instrument.semitones
-
-      return Array(12).fill().map((_, i) => {
-        const name = semitones.map(semitone => noteNames[(semitone + i) % 12]).join(' ')
-        const alias = instrument.transpositions[i] || null
-
-        return { i, name, alias }
-      })
+      return this.instruments[this.catalogInstrument].transpositions
+        .map(([name, alias], i) => ({ i, name, alias }))
     },
+
     transposedChord () {
-      if (!this.catalogChord) return
-      if (this.transpositionI === 0) return this.catalogChord
+      const quality = chords[this.catalogInstrument].find(group => group.quality === this.catalogQuality)
+      if (!quality) return false
 
-      const [root, quality = ''] = this.catalogChord.name.trim().split(/^([A-G][b#]?)(.*)/).filter(part => part !== '')
+      const rootIndex = notes.findIndex(note => note.name === this.catalogRoot)
+      const transposedRoot = notes[mod(rootIndex - this.transpositionI, 12)].name
 
-      const rootIndex = notes.findIndex(note => note.name === root || (note.alt || []).includes(root))
-      const transposedName = notes[mod(rootIndex - this.transpositionI, 12)].name + quality
-      
-      const transposedChord = this.catalogChords.find(catalogChord => catalogChord.name === transposedName)
-
-      if (transposedChord) {
-        return transposedChord
-      } else {
-        console.error(`Unknown chord transposition ${transposedName} (+${this.transpositionI}) for chord ${this.catalogChord.name}`)
-      }
+      return quality.chords.find(chord => chord.root === transposedRoot)
     }
   },
   watch: {
-    instrument (val) {
+    catalogInstrument (val) {
       this.catalogChordName = null
       this.transpositionI = 0
     },
-    catalogChordName () {
+    catalogRoot () {
+      this.diagramI = 0
+      this.readFromCatalog()
+    },
+    catalogQuality () {
       this.diagramI = 0
       this.readFromCatalog()
     },
@@ -258,30 +295,33 @@ export default {
   },
   methods: {
     clearCatalog () {
-      this.catalogChordName = ''
+      this.catalogQuality = null
     },
+
     readFromCatalog () {
       if (!this.transposedChord) return
 
       const diagram = this.transposedChord.diagrams[this.diagramI]
       if (!diagram) return
 
-      this.stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
+      let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
+      console.log({ stringNames })
 
       let [position, frets, functions] = diagram.split(':')
 
       if (this.leftHanded) {
         frets = frets.split('').reverse().join('')
         functions = functions.split(',').reverse().join()
-        this.stringNames = this.stringNames.split(',').reverse().join(',')
+        stringNames = stringNames.split(',').reverse().join(',')
       }
 
-      this.name = this.catalogChord.name
+      this.name = `${this.catalogRoot}${this.catalogQuality}`
       this.position = parseInt(position)
       this.frets = frets
       this.functions = functions
       this.fingerings = ''
-      this.strings = { ukulele: 4, guitar: 6 }[this.instrument]
+      this.strings = this.instruments[this.catalogInstrument].strings
+      this.stringNames = stringNames
     },
   },
   mounted () {

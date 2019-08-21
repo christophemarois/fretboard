@@ -1,74 +1,133 @@
 {
-  "instruments": [
-    { "name": "ukulele", "strings": 4, "semitones": [7, 0, 4, 9], "transpositions": { "0": "Standard", "7": "Baritone" } },
-    { "name": "guitar", "strings": 6, "semitones": [4, 9, 2, 7, 11, 4], "transpositions": { "0": "Standard", "5": "Guitalele" } }
-  ],
+  "instruments": {
+    "ukulele": {
+      "strings": 4,
+      "semitones": [7, 0, 4, 9],
+      "transpositions": [
+        ["G C E A", "Standard"],
+        ["Ab Db F Bb", null],
+        ["A D F# B", null],
+        ["Bb Eb G C", null],
+        ["B E G# C#", null],
+        ["C F A D", "Baritone"],
+        ["Db Gb Bb Eb", null],
+        ["D G B E", null],
+        ["Eb Ab C F", null],
+        ["E A C# F#", null],
+        ["F Bb D G", null],
+        ["Gb Cb Eb Ab", null]
+      ]
+    },
+    "guitar": {
+      "strings": 6,
+      "semitones": [4, 9, 2, 7, 11, 4],
+      "transpositions": [
+        ["E A D G B E", "Standard"],
+        ["F Bb Eb Ab C F", null],
+        ["F# B E A C# F#", null],
+        ["G C F Bb D G", null],
+        ["Ab Db Gb Cb Eb Ab", null],
+        ["A D G C E A", "Guitalele"],
+        ["Bb Eb Ab Db F Bb", null],
+        ["B E A D F# B", null],
+        ["C F Bb Eb G C", null],
+        ["C# F# B E G# C#", null],
+        ["D G C F A D", null],
+        ["Eb Ab Db Gb Bb Eb", null]
+      ]
+    }
+  },
   "notes": [
     { "name": "C" },
-    { "name": "Db", "alt": ["C#"] },
+    { "name": "Db", "alt": "C#" },
     { "name": "D" },
-    { "name": "Eb", "alt": ["D#"] },
+    { "name": "Eb", "alt": "D#" },
     { "name": "E" },
     { "name": "F" },
-    { "name": "F#", "alt": ["Gb"] },
+    { "name": "F#", "alt": "Gb" },
     { "name": "G" },
-    { "name": "Ab", "alt": ["G#"] },
+    { "name": "Ab", "alt": "G#" },
     { "name": "A" },
-    { "name": "Bb", "alt": ["A#"] },
+    { "name": "Bb", "alt": "A#" },
     { "name": "B" }
   ],
-  "qualities": [
-    { "name": "7", "alt": ["dom7"] },
-    { "name": "9", "alt": ["dom9"] },
-    { "name": "13", "alt": ["dom13"] },
-    { "name": "6/9", "alt": ["69"] },
-    { "name": "2" },
-    { "name": "5" },
-    { "name": "6" },
-    { "name": "M", "alt": ["maj"] },
-    { "name": "m", "alt": ["min"] },
-    { "name": "add9" },
-    { "name": "sus" },
-    { "name": "+", "alt": ["aug", "#5"] },
-    { "name": "dim", "alt": ["o"] },
-    { "name": "dim7", "alt": ["o7"] },
-    { "name": "M7", "alt": ["∆", "maj7"] },
-    { "name": "M9", "alt": ["maj9"] },
-    { "name": "M13" },
-    { "name": "M7#11", "alt": ["∆#11"] },
-    { "name": "M9#11" },
-    { "name": "M7#5", "alt": ["∆#5"] },
-    { "name": "m7" },
-    { "name": "m9" },
-    { "name": "m11" },
-    { "name": "m6" },
-    { "name": "m69", "alt": ["min6/9"] },
-    { "name": "m#5" },
-    { "name": "mb6" },
-    { "name": "mM7", "alt": ["minMaj7"] },
-    { "name": "mM9", "alt": ["minMaj9"] },
-    { "name": "13#11" },
-    { "name": "13#9" },
-    { "name": "13b9" },
-    { "name": "m7b5", "alt": ["ø7"] },
-    { "name": "m7b59", "alt": ["ø9"] },
-    { "name": "13sus" },
-    { "name": "7#11" },
-    { "name": "7#5" },
-    { "name": "7#9" },
-    { "name": "7#9#11" },
-    { "name": "7#9#5" },
-    { "name": "7alt" },
-    { "name": "7b13sus" },
-    { "name": "7b9" },
-    { "name": "7b9#11" },
-    { "name": "7b9#5" },
-    { "name": "7b9#9" },
-    { "name": "7b9sus" },
-    { "name": "7susadd3" },
-    { "name": "7sus" },
-    { "name": "9#11" },
-    { "name": "9#5" },
-    { "name": "9sus" }
+  "qualityGroups": [
+    {
+      "name": "Major",
+      "qualities": [
+        { "name": "M", "alt": ["maj"] },
+        { "name": "sus" },
+        { "name": "6" },
+        { "name": "M7", "alt": ["∆"] },
+        { "name": "add9" },
+        { "name": "M9" },
+        { "name": "6/9" },
+        { "name": "M7#11" },
+        { "name": "M9#11" },
+        { "name": "M13" },
+        { "name": "M7#5" }
+      ]
+    },
+    {
+      "name": "Minor",
+      "qualities": [
+        { "name": "m", "alt": ["min"] },
+        { "name": "mb6" },
+        { "name": "m6" },
+        { "name": "m7" },
+        { "name": "m9" },
+        { "name": "m6/9" },
+        { "name": "m11" },
+        { "name": "m#5" },
+        { "name": "mM7" },
+        { "name": "mM9" }
+      ]
+    },
+    {
+      "name": "Dim/Aug",
+      "qualities": [
+        { "name": "+", "alt": ["aug", "#5"] },
+        { "name": "dim" },
+        { "name": "dim7", "alt": ["o"] },
+        { "name": "m7b5", "alt": ["ø"] },
+        { "name": "m7b59", "alt": ["ø9"] }
+      ]
+    },
+    {
+      "name": "Dominant",
+      "qualities": [
+        { "name": "7" },
+        { "name": "7sus" },
+        { "name": "7susadd3" },
+        { "name": "7#5" },
+        { "name": "7b9" },
+        { "name": "7b9sus" },
+        { "name": "7b9#5" },
+        { "name": "7b9#9" },
+        { "name": "7b9#11" },
+        { "name": "7#9" },
+        { "name": "7#9#5" },
+        { "name": "7#11" },
+        { "name": "7#9#11" },
+        { "name": "7alt" },
+        { "name": "7b13sus" },
+        { "name": "9" },
+        { "name": "9sus" },
+        { "name": "9#5" },
+        { "name": "9#11" },
+        { "name": "13" },
+        { "name": "13sus" },
+        { "name": "13b9" },
+        { "name": "13#9" },
+        { "name": "13#11" }
+      ]
+    },
+    {
+      "name": "Open",
+      "qualities": [
+        { "name": "2" },
+        { "name": "5" }
+      ]
+    }
   ]
 }
