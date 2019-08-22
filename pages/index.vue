@@ -10,6 +10,12 @@
             <a class="github-button" href="https://github.com/christophemarois/fretboard/issues" data-show-count="true" aria-label="Issue christophemarois/fretboard on GitHub">Issue</a>
           </div>
 
+          <div v-if="!closedNewsIds.includes(4)" class="toast" style="margin-top: 1rem">
+            <button class="btn btn-clear float-right" @click="closedNewsIds.push(4)"></button>
+            <code>2019/08/22</code>
+            Added option for displaying chord shapes regardless of root note.
+          </div>
+          
           <div v-if="!closedNewsIds.includes(3)" class="toast" style="margin-top: 1rem">
             <button class="btn btn-clear float-right" @click="closedNewsIds.push(3)"></button>
             <code>2019/08/20</code>
@@ -57,52 +63,79 @@
 
               <div class="form-group form-inline" style="margin-left: 0.5rem">
                 <label class="form-switch">
-                  <input type="checkbox" v-model="leftHanded">
+                  <input type="checkbox" v-model="isLeftHandedMode">
                   <i class="form-icon"></i> Left-handed
+                </label>
+              </div>
+              
+              <div class="form-group form-inline" style="margin-left: 0.5rem">
+                <label class="form-switch">
+                  <input type="checkbox" v-model="isShapeMode">
+                  <i class="form-icon"></i> Chord Shape
                 </label>
               </div>
             </div>
 
-            <div>
-              <div class="form-group form-inline">
-                <label class="form-label" for="catalogChord"><b>Root</b></label>
+            <div class="divider" />
 
-                <div style="margin: -0.25rem 0 0 -0.25rem">
+            <div v-if="isShapeMode" class="form-group form-inline">
+              <label class="form-label" for="catalogChord"><b>Shape</b></label>
+
+              <div style="margin: -0.25rem 0 0 -0.25rem">
+                <button
+                  class="btn"
+                  :class="{ 'active': shape === 'closed' }"
+                  @click="shape = 'closed'"
+                  style="margin: 0.25rem 0 0 0.25rem"
+                >Closed</button>
+                
+                <button
+                  class="btn"
+                  :class="{ 'active': shape === 'open' }"
+                  @click="shape = 'open'"
+                  style="margin: 0.25rem 0 0 0.25rem"
+                >Open</button>
+              </div>
+            </div>
+            
+            <div v-else class="form-group form-inline">
+              <label class="form-label" for="catalogChord"><b>Root</b></label>
+
+              <div style="margin: -0.25rem 0 0 -0.25rem">
+                <button
+                  v-for="note in notes"
+                  :key="'catalog-root-' + note.name"
+                  class="btn"
+                  :class="{ 'active': catalogRoot === note.name }"
+                  @click="catalogRoot = note.name"
+                  style="margin: 0.25rem 0 0 0.25rem"
+                >
+                  {{ note.name + (note.alt ? `/${note.alt}` : '') }}
+                </button>
+              </div>
+            </div>
+            
+            <div class="form-group form-inline">
+              <label class="form-label" for="catalogChord">
+                <b>Quality</b>
+              </label>
+              
+              <div style="margin-top: -0.5rem" />
+
+              <div v-for="group in qualityGroups" :key="`catalog-quality-${group.name}`">
+                <div style="margin-top: 0.5rem">{{ group.name }}</div>
+
+                <div style="margin: 0 0 0 -0.25rem">
                   <button
-                    v-for="note in notes"
-                    :key="'catalog-root-' + note.name"
+                    v-for="quality in group.qualities"
+                    :key="'catalog-quality-' + quality.name"
                     class="btn"
-                    :class="{ 'active': catalogRoot === note.name }"
-                    @click="catalogRoot = note.name"
+                    :class="{ 'active': catalogQuality === quality.name }"
+                    @click="catalogQuality = quality.name"
                     style="margin: 0.25rem 0 0 0.25rem"
                   >
-                    {{ note.name + (note.alt ? `/${note.alt}` : '') }}
+                    {{ quality.name + (quality.alt ? `, ${quality.alt.join(', ')}` : '') }}
                   </button>
-                </div>
-              </div>
-              
-              <div class="form-group form-inline">
-                <label class="form-label" for="catalogChord">
-                  <b>Quality</b>
-                </label>
-                
-                <div style="margin-top: -0.5rem" />
-
-                <div v-for="group in qualityGroups" :key="`catalog-quality-${group.name}`">
-                  <div style="margin-top: 0.5rem">{{ group.name }}</div>
-
-                  <div style="margin: 0 0 0 -0.25rem">
-                    <button
-                      v-for="quality in group.qualities"
-                      :key="'catalog-quality-' + quality.name"
-                      class="btn"
-                      :class="{ 'active': catalogQuality === quality.name }"
-                      @click="catalogQuality = quality.name"
-                      style="margin: 0.25rem 0 0 0.25rem"
-                    >
-                      {{ quality.name + (quality.alt ? `, ${quality.alt.join(', ')}` : '') }}
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -172,12 +205,16 @@
             ></vuekulele>
           </div>
 
-          <div v-if="transposedChord" class="form-group" style="margin-top: 1rem; text-align: center;">
+          <div v-if="catalogQuality" style="text-align: center; margin: 0.5rem 0;">
+            <a :href="currentGithubIssueURL" target="_blank" style="font-size: 0.75rem;">Report a problem with this chord</a>
+          </div>
+
+          <div v-if="catalogQuality" class="form-group" style=" text-align: center;">
             <label class="form-label" for="catalogChord"><b>Variants</b></label>
 
             <div>
               <button
-                v-for="(diagrams, i) in transposedChord.diagrams"
+                v-for="(diagrams, i) in isShapeMode ? shapeDiagrams : transposedChord.diagrams"
                 :key="'catalog-diagram-' + i"
                 class="btn"
                 :class="{ 'active': diagramI === i }"
@@ -217,6 +254,7 @@ import Vuekulele from '~/components/Vuekulele.vue'
 
 import { notes, qualityGroups, instruments } from '~/data/entries.json'
 import chords from '~/data/chords2.json'
+import shapes from '~/data/shapes.json'
 
 const mod = (num, mod) => ((num % mod) + mod) % mod
 
@@ -229,10 +267,16 @@ export default {
       instruments,
 
       mode: 'catalog',
+      closedNewsIds: [1, 2, 3, 4],
 
       catalogInstrument: 'ukulele',
       catalogRoot: 'C',
       catalogQuality: null,
+      isShapeMode: false,
+      shape: 'closed',
+      diagramI: 0,
+      isLeftHandedMode: false,
+      transpositionI: 0,
 
       strings: 4,
       name: 'C7',
@@ -243,14 +287,17 @@ export default {
       minimumFrets: 4,
       size: 'medium',
       svgMode: true,
-      diagramI: 0,
-      leftHanded: false,
       stringNames: 'G,C,E,A',
-      transpositionI: 0,
-      closedNewsIds: [1, 2, 3],
     }
   },
   computed: {
+    shapeDiagrams () {
+      const quality = shapes[this.catalogInstrument].find(group => group.quality === this.catalogQuality)
+      if (!quality) return null
+
+      return quality.diagrams
+    },  
+
     transpositions () {
       return this.instruments[this.catalogInstrument].transpositions
         .map(([name, alias], i) => ({ i, name, alias }))
@@ -258,18 +305,32 @@ export default {
 
     transposedChord () {
       const quality = chords[this.catalogInstrument].find(group => group.quality === this.catalogQuality)
-      if (!quality) return false
+      if (!quality) return null
 
       const rootIndex = notes.findIndex(note => note.name === this.catalogRoot)
       const transposedRoot = notes[mod(rootIndex - this.transpositionI, 12)].name
 
       return quality.chords.find(chord => chord.root === transposedRoot)
+    },
+
+    currentGithubIssueURL () {
+      const diagram = this.isShapeMode
+        ? this.shapeDiagrams[this.diagramI]
+        : this.transposedChord.diagrams[this.diagramI]
+      
+      if (!diagram) return '#'
+
+      const url = new URL(`https://github.com/christophemarois/fretboard/issues/new`)
+      url.searchParams.set('title', `Problem with diagram ${diagram}`)
+      url.searchParams.set('labels', ['invalid'])
+      return url.toString()
     }
   },
   watch: {
     catalogInstrument (val) {
-      this.catalogChordName = null
       this.transpositionI = 0
+      this.diagramI = 0
+      this.readFromCatalog()
     },
     catalogRoot () {
       this.diagramI = 0
@@ -282,11 +343,17 @@ export default {
     diagramI () {
       this.readFromCatalog()
     },
-    leftHanded () {
+    isLeftHandedMode () {
+      this.readFromCatalog()
+    },
+    isShapeMode () {
       this.readFromCatalog()
     },
     transpositionI () {
       this.diagramI = 0
+      this.readFromCatalog()
+    },
+    shape () {
       this.readFromCatalog()
     },
     closedNewsIds (val) {
@@ -299,29 +366,57 @@ export default {
     },
 
     readFromCatalog () {
-      if (!this.transposedChord) return
+      if (this.isShapeMode) {
+        if (!this.shapeDiagrams) return
 
-      const diagram = this.transposedChord.diagrams[this.diagramI]
-      if (!diagram) return
+        const diagram = this.shapeDiagrams[this.diagramI]
+        if (!diagram) return
 
-      let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
-      console.log({ stringNames })
+        let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
+  
+        let [position, frets, functions] = diagram.split(':')
+  
+        if (this.isLeftHandedMode) {
+          frets = frets.split('').reverse().join('')
+          functions = functions.split(',').reverse().join()
+          stringNames = stringNames.split(',').reverse().join(',')
+        }
 
-      let [position, frets, functions] = diagram.split(':')
+        if (this.shape === 'closed') {
+          frets = frets.split('').map(fret => fret === 'x' ? 'x' : (parseInt(fret) + 1).toString()).join('')
+        }
 
-      if (this.leftHanded) {
-        frets = frets.split('').reverse().join('')
-        functions = functions.split(',').reverse().join()
-        stringNames = stringNames.split(',').reverse().join(',')
+        this.name = this.catalogQuality
+        this.position = parseInt(position)
+        this.frets = frets
+        this.functions = functions
+        this.fingerings = ''
+        this.strings = this.instruments[this.catalogInstrument].strings
+        this.stringNames = stringNames
+      } else {
+        if (!this.transposedChord) return
+  
+        const diagram = this.transposedChord.diagrams[this.diagramI]
+        if (!diagram) return
+  
+        let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
+  
+        let [position, frets, functions] = diagram.split(':')
+  
+        if (this.isLeftHandedMode) {
+          frets = frets.split('').reverse().join('')
+          functions = functions.split(',').reverse().join()
+          stringNames = stringNames.split(',').reverse().join(',')
+        }
+  
+        this.name = `${this.catalogRoot}${this.catalogQuality}`
+        this.position = parseInt(position)
+        this.frets = frets
+        this.functions = functions
+        this.fingerings = ''
+        this.strings = this.instruments[this.catalogInstrument].strings
+        this.stringNames = stringNames
       }
-
-      this.name = `${this.catalogRoot}${this.catalogQuality}`
-      this.position = parseInt(position)
-      this.frets = frets
-      this.functions = functions
-      this.fingerings = ''
-      this.strings = this.instruments[this.catalogInstrument].strings
-      this.stringNames = stringNames
     },
   },
   mounted () {
