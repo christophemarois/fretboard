@@ -26,6 +26,7 @@ For a long time, I've wanted a fretboard diagram builder with extensive flexibil
 ### Upcoming
 
 * Diagram font fixes + fixes to alterations (♯♭)
+* Compute chords based on shapes instead of catalog
 * Fix to guitar functions where it displays "B" instead of the function
 * Mobile layout
 * State preservation across refreshes
