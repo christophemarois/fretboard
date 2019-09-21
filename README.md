@@ -20,14 +20,22 @@ For a long time, I've wanted a fretboard diagram builder with extensive flexibil
 * String names (optional, great to convey the tuning or transposition of a chord, or whether the chord is in left-handed mode)
 * Variable string count
 * Minimum frets per diagram
-* Chord catalog for Ukulele and Guitar, with chord name functions precomputed + support for transposed tunings.
-* PWA with offline use
-
-### Upcoming
-
-* Diagram font fixes + fixes to alterations (♯♭)
+* Chord shape catalog for Ukulele and Guitar, with chord name functions precomputed + support for transposed tunings + shape tranposition to all roots.
 * Compute chords based on shapes instead of catalog
+* PWA with offline use
+* Keyboard shortcuts for navigating catalog
+* Note names from catalog
+
+### Known bugs
+
+* Bug in rootless note names (e.g. m7b59)
+* Fix error when manual frets are empty
+* Diagram font fixes + fixes to alterations (♯♭)
 * Fix to guitar functions where it displays "B" instead of the function
+
+### Roadmap
+
+* Shadow root in Vuekulele
+* Toggle root for enharmonic alternatives
 * Mobile layout
 * State preservation across refreshes
-* Note names from catalog

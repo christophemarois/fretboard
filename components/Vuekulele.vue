@@ -125,7 +125,7 @@
 
         <g
           class="stringNames"
-          :transform="`translate(1,${fretsCount * caseSize + fontSize * (this.size === 'small' ? 1.1 : 0.9)})`"
+          :transform="`translate(1,${fretsCount * caseSize + fontSize * (this.size === 'small' ? 1.2 : 0.9)})`"
           :style="`font-size: ${fontSize * (this.size === 'small' ? 0.75 : 0.5)}px; font-weight: bold;`"
         >
           <text
@@ -135,12 +135,13 @@
             text-anchor="middle"
             v-text="name"
             :font-family="fontFamily"
+            fill="#777"
           ></text>
         </g>
 
         <g
           class="subText"
-          :transform="`translate(1,${fretsCount * caseSize + fontSize * (_stringNames.length > 0 ? 2 : 1.5)})`"
+          :transform="`translate(1,${fretsCount * caseSize + fontSize * (_stringNames.length > 0 ? 2 : 1.5) + fontSize * (this.size === 'small' ? 0.1 : 0)})`"
           :style="`font-size: ${fontSize}px; font-weight: 600`"
         >
           <text
@@ -149,6 +150,21 @@
             :x="i * caseSize"
             text-anchor="middle"
             v-html="formatInterval(_functions[i] || '')"
+            :font-family="fontFamily"
+          ></text>
+        </g>
+
+        <g
+          class="noteNames"
+          :transform="`translate(1,${fretsCount * caseSize + fontSize * (_noteNames.length > 0 ? 2 : 1.5) + fontSize * (this.size === 'small' ? 0.9 : 0.8)})`"
+          :style="`font-size: ${fontSize * (this.size === 'small' ? 0.75 : 0.7)}px; font-weight: bold;`"
+        >
+          <text
+            v-for="(name, i) in _noteNames"
+            :key="'notename' + i"
+            :x="i * caseSize"
+            text-anchor="middle"
+            v-text="name"
             :font-family="fontFamily"
           ></text>
         </g>
@@ -240,6 +256,14 @@
         }
       },
 
+      noteNames: {
+        type: String,
+        default: '',
+        validator (val) {
+          return /^[A-Zb#,]*$/.test(val)
+        }
+      },
+
       fontFamily: {
         type: String,
         default: `-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif`,
@@ -280,7 +304,7 @@
 
       mergedWatcher () {
         return this.size, this.chord, this.strings, this.position, this.frets,
-          this.functions, this.fingerings, this.root, this.minimumFrets, this.stringNames, Date.now()
+          this.functions, this.fingerings, this.root, this.minimumFrets, this.stringNames, this.noteNames, Date.now()
       },
 
       svgWidth () {
@@ -293,7 +317,8 @@
           (this.fontSize * 3) +
           (this.strokeWidth * 2) +
           (this.fontSize * 1.5) +
-          (this._stringNames.length > 0 ? this.fontSize * 0.5 : 0)
+          (this._stringNames.length > 0 ? this.fontSize * 0.5 : 0) +
+          (this._noteNames.length > 0 ? this.fontSize * 1 : 0)
         )
       },
 
@@ -321,12 +346,18 @@
       },
 
       _stringNames () {
-        if (this.stringNames.trim() === '') return []
+        if (!this.stringNames || this.stringNames.trim() === '') return []
         
-        return (this.stringNames || '').split(',').map(name => {
-          return name.replace(/([A-G])(#|b)/g, (match, root, alteration) => `
-            ${root}${alterations[alteration]}
-          `)
+        return this.stringNames.split(',').map(name => {
+          return name.replace(/([A-G])(#|b)/g, (match, root, alteration) => `${root}${alterations[alteration]}`)
+        })
+      },
+      
+      _noteNames () {
+        if (!this.noteNames || this.noteNames.trim() === '') return []
+        
+        return this.noteNames.split(',').map(name => {
+          return name.trim().replace(/([A-G])(##|#|bb|b)/g, (match, root, alteration) => `${root}${alterations[alteration]}`)
         })
       },
 

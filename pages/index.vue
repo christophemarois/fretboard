@@ -3,31 +3,24 @@
     <div class="container">
       <div class="columns">
         <div class="column col-8">
-          <h1>Fretboard Diagram Builder</h1>
+          <div style="display: flex; align-items: center; margin-bottom: 1rem">
+            <img src="/icon.png" style="width: 45px; margin-right: 0.5rem; border-radius: 8px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.25)" />
+            <h1 style="margin: 0">Fretboard Diagram Builder</h1>
+          </div>
 
           <div>
             <a class="github-button" href="https://github.com/christophemarois/fretboard" data-show-count="true" aria-label="Star christophemarois/fretboard on GitHub">Star</a>
             <a class="github-button" href="https://github.com/christophemarois/fretboard/issues" data-show-count="true" aria-label="Issue christophemarois/fretboard on GitHub">Issue</a>
           </div>
 
-          <div v-if="!closedNewsIds.includes(4)" class="toast" style="margin-top: 1rem">
-            <button class="btn btn-clear float-right" @click="closedNewsIds.push(4)"></button>
-            <code>2019/08/22</code>
-            Added option for displaying chord shapes regardless of root note.
-          </div>
-          
-          <div v-if="!closedNewsIds.includes(3)" class="toast" style="margin-top: 1rem">
-            <button class="btn btn-clear float-right" @click="closedNewsIds.push(3)"></button>
-            <code>2019/08/20</code>
-            Better chord catalog UI, better transposition enharmonics.
-          </div>
-          
-          <div v-if="!closedNewsIds.includes(2)" class="toast" style="margin-top: 1rem">
-            <button class="btn btn-clear float-right" @click="closedNewsIds.push(2)"></button>
-            <code>2019/08/18</code>
-            <a href="https://github.com/christophemarois/fretboard" target="_blank">Open-sourced</a>
-            and now available as an offline PWA (can be installed and used offline on Chrome >=73,
-            latest iOS Safari, and others). Also, fixed some fonts issues in the diagram.
+          <div v-if="!closedNewsIds.includes(5)" class="toast" style="margin-top: 1rem">
+            <button class="btn btn-clear float-right" @click="closedNewsIds.push(5)"></button>
+            <code>2019/09/21</code> WIP changes:
+            <ul>
+              <li>Chord catalog is now algorithmically populated with shapes only.</li>
+              <li>Keyboard shortcuts for navigating chord catalog.</li>
+              <li>Optional note names in chord catalog</li>
+            </ul>
           </div>
 
           <ul class="tab" style="margin: 1rem 0">
@@ -60,8 +53,10 @@
                   </option>
                 </select>
               </div>
+            </div>
 
-              <div class="form-group form-inline" style="margin-left: 0.5rem">
+            <div style="margin-top: 0.5rem">
+              <div class="form-group form-inline" >
                 <label class="form-switch">
                   <input type="checkbox" v-model="isLeftHandedMode">
                   <i class="form-icon"></i> Left-handed
@@ -71,7 +66,14 @@
               <div class="form-group form-inline" style="margin-left: 0.5rem">
                 <label class="form-switch">
                   <input type="checkbox" v-model="isShapeMode">
-                  <i class="form-icon"></i> Chord Shape
+                  <i class="form-icon"></i> Chord Shapes only
+                </label>
+              </div>
+
+              <div v-if="!isShapeMode" class="form-group form-inline" style="margin-left: 0.5rem">
+                <label class="form-switch">
+                  <input type="checkbox" v-model="sendNoteNames">
+                  <i class="form-icon"></i> Display note names
                 </label>
               </div>
             </div>
@@ -79,27 +81,25 @@
             <div class="divider" />
 
             <div v-if="isShapeMode" class="form-group form-inline">
-              <label class="form-label" for="catalogChord"><b>Shape</b></label>
+              <label class="form-label" for="catalogChord"><b>Shape</b>&nbsp;&nbsp;<kbd>q</kbd> ↔ <kbd>w</kbd></label>
 
-              <div style="margin: -0.25rem 0 0 -0.25rem">
+              <div class="btn-group">
                 <button
                   class="btn"
                   :class="{ 'active': shape === 'closed' }"
                   @click="shape = 'closed'"
-                  style="margin: 0.25rem 0 0 0.25rem"
                 >Closed</button>
                 
                 <button
                   class="btn"
                   :class="{ 'active': shape === 'open' }"
                   @click="shape = 'open'"
-                  style="margin: 0.25rem 0 0 0.25rem"
                 >Open</button>
               </div>
             </div>
             
             <div v-else class="form-group form-inline">
-              <label class="form-label" for="catalogChord"><b>Root</b></label>
+              <label class="form-label" for="catalogChord"><b>Root</b>&nbsp;&nbsp;<kbd>q</kbd> ↔ <kbd>w</kbd></label>
 
               <div style="margin: -0.25rem 0 0 -0.25rem">
                 <button
@@ -114,10 +114,12 @@
                 </button>
               </div>
             </div>
+
+            <div class="divider" />
             
             <div class="form-group form-inline">
               <label class="form-label" for="catalogChord">
-                <b>Quality</b>
+                <b>Quality</b>&nbsp;&nbsp;<kbd>a</kbd> ↔ <kbd>s</kbd>
               </label>
               
               <div style="margin-top: -0.5rem" />
@@ -142,6 +144,11 @@
           </div>
           
           <div v-if="mode === 'manual'">
+            <div v-if="catalogQuality" class="toast toast-primary" style="margin-bottom: 1rem">
+              <i class="icon icon-message" />&nbsp;
+              You are about to edit a catalog chord. Any changes made here will trigger manual mode.
+            </div>
+            
             <h3>Chord</h3>
 
             <div>
@@ -164,6 +171,10 @@
               <div class="form-group form-inline">
                 <label class="form-label" for="fingerings"><b>Fingerings</b><br/>e.g. <span class="label">0001</span></label>
                 <input id="fingerings" type="text" v-model="fingerings" class="form-input" pattern="\d+" @input="clearCatalog" />
+              </div>
+              <div class="form-group form-inline">
+                <label class="form-label" for="noteNames"><b>Note names</b><br/>e.g. <span class="label">C,E,,A</span></label>
+                <input id="noteNames" type="text" v-model="noteNames" class="form-input" pattern="[A-Z,b#]+" @input="clearCatalog" />
               </div>
             </div>
 
@@ -189,6 +200,26 @@
         </div>
         
         <div class="column col-4">
+          <div v-if="catalogQuality" class="form-group" style=" text-align: center; margin-bottom: 2rem">
+            <label class="form-label" for="catalogChord" style="margin-bottom: 0.5rem">
+              <b>Variants</b>&nbsp;&nbsp;<kbd>z</kbd> &harr; <kbd>x</kbd> or <kbd>&larr;</kbd> &harr; <kbd>&rarr;</kbd>
+            </label>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; max-width: 8rem; margin: 0 auto">
+              <button class="btn btn-primary" @click="goToDiagram(-1)">
+                <i class="icon icon-arrow-left" />
+              </button>
+              
+              <span style="margin: 0 0.5rem; font-weight: bold; font-size: 1.25rem">
+                {{ diagramI + 1 }}/{{ (isShapeMode ? shapeDiagrams : chordDiagrams).length }}
+              </span>
+
+              <button class="btn btn-primary" @click="goToDiagram(1)">
+                <i class="icon icon-arrow-right" />
+              </button>
+            </div>
+          </div>
+
           <div class="chord">
             <vuekulele
               ref="vuekulele"
@@ -202,6 +233,7 @@
               :size="size"
               :svgMode="svgMode"
               :stringNames="stringNames"
+              :noteNames="noteNames"
             ></vuekulele>
           </div>
 
@@ -209,20 +241,7 @@
             <a :href="currentGithubIssueURL" target="_blank" style="font-size: 0.75rem;">Report a problem with this chord</a>
           </div>
 
-          <div v-if="catalogQuality" class="form-group" style=" text-align: center;">
-            <label class="form-label" for="catalogChord"><b>Variants</b></label>
-
-            <div>
-              <button
-                v-for="(diagrams, i) in isShapeMode ? shapeDiagrams : transposedChord.diagrams"
-                :key="'catalog-diagram-' + i"
-                class="btn"
-                :class="{ 'active': diagramI === i }"
-                @click="diagramI = i"
-                style="margin: 0.25rem 0 0 0.25rem"
-              >{{ i + 1 }}</button>
-            </div>
-          </div>
+          
 
           <div>
             <select class="form-select form-input" v-model="size" style="width: auto; margin: 1rem auto 0 auto;">
@@ -252,8 +271,9 @@
 <script>
 import Vuekulele from '~/components/Vuekulele.vue'
 
+import { placeShapeDiagram } from '@/data/chord-shape-to-diagram'
+
 import { notes, qualityGroups, instruments } from '~/data/entries.json'
-import chords from '~/data/chords2.json'
 import shapes from '~/data/shapes.json'
 
 const mod = (num, mod) => ((num % mod) + mod) % mod
@@ -267,16 +287,18 @@ export default {
       instruments,
 
       mode: 'catalog',
-      closedNewsIds: [1, 2, 3, 4],
+      closedNewsIds: [5],
 
       catalogInstrument: 'ukulele',
       catalogRoot: 'C',
       catalogQuality: null,
       isShapeMode: false,
+      sendNoteNames: true,
       shape: 'closed',
       diagramI: 0,
       isLeftHandedMode: false,
       transpositionI: 0,
+      noteNames: '',
 
       strings: 4,
       name: 'C7',
@@ -291,38 +313,73 @@ export default {
     }
   },
   computed: {
+    mousetrap () {
+      return [
+        [['q'], () => this.goToRootOrShape(-1)],
+        [['w'], () => this.goToRootOrShape(1)],
+        [['a'], () => this.goToQuality(-1)],
+        [['s'], () => this.goToQuality(1)],
+        [['z', 'left'], () => this.goToDiagram(-1)],
+        [['x', 'right'], () => this.goToDiagram(1)],
+      ]
+    },
+
     shapeDiagrams () {
       const quality = shapes[this.catalogInstrument].find(group => group.quality === this.catalogQuality)
       if (!quality) return null
 
       return quality.diagrams
-    },  
-
-    transpositions () {
-      return this.instruments[this.catalogInstrument].transpositions
-        .map(([name, alias], i) => ({ i, name, alias }))
     },
 
-    transposedChord () {
-      const quality = chords[this.catalogInstrument].find(group => group.quality === this.catalogQuality)
-      if (!quality) return null
+    transpositions () {
+      return this.instruments[this.catalogInstrument].transpositions.map(([name, alias], i) => ({ i, name, alias }))
+    },
 
-      const rootIndex = notes.findIndex(note => note.name === this.catalogRoot)
-      const transposedRoot = notes[mod(rootIndex - this.transpositionI, 12)].name
+    chordDiagrams () {
+      if (!this.catalogQuality) return []
 
-      return quality.chords.find(chord => chord.root === transposedRoot)
+      return this.shapeDiagrams
+        .map(diagram => {
+          const [position, shape, functions] = diagram.split(':')
+
+          return placeShapeDiagram({
+            root: this.catalogRoot,
+            shape: shape.split('').map(fret => fret === 'x' ? 'x' : parseInt(fret)),
+            functions: functions.split(','),
+            strings: this.transpositions[0].name.split(' '),
+            transpositionOffset: this.transpositionI,
+            maxFret: this.catalogInstrument === 'guitar' ? 30 : 18
+          })
+        })
+        .filter(placedEl => !!placedEl)
+        .sort((a, b) => a.position - b.position)
+        .map(({ position, frets, functions, noteNames }) => {
+          const diagram = [position, frets.join(''), functions.join(',')].join(':')
+          return { diagram, noteNames: noteNames.join(',') }
+        })
     },
 
     currentGithubIssueURL () {
+      if (!this.catalogQuality) return '#'
+
       const diagram = this.isShapeMode
         ? this.shapeDiagrams[this.diagramI]
-        : this.transposedChord.diagrams[this.diagramI]
-      
+        : this.chordDiagrams[this.diagramI].diagram
+
       if (!diagram) return '#'
 
+      const shape = diagram.split(':')[2]
+
       const url = new URL(`https://github.com/christophemarois/fretboard/issues/new`)
-      url.searchParams.set('title', `Problem with diagram ${diagram}`)
+
+      url.searchParams.set('title', `Problem with ${this.catalogInstrument} ${this.catalogQuality} shape ${shape}`)
       url.searchParams.set('labels', ['invalid'])
+      url.searchParams.set('body', [
+        `[Describe the problem here]`,
+        `---`,
+        this.isShapeMode ? `Shape mode` : `Chord mode: ${this.catalogRoot} +${this.transpositionI}`,
+      ].join('\n'))
+
       return url.toString()
     }
   },
@@ -347,6 +404,10 @@ export default {
       this.readFromCatalog()
     },
     isShapeMode () {
+      this.diagramI = 0
+      this.readFromCatalog()
+    },
+    sendNoteNames () {
       this.readFromCatalog()
     },
     transpositionI () {
@@ -366,65 +427,97 @@ export default {
     },
 
     readFromCatalog () {
+      if (!this.shapeDiagrams) return
+
+      let diagram
+      let noteNames = ''
+
       if (this.isShapeMode) {
-        if (!this.shapeDiagrams) return
-
-        const diagram = this.shapeDiagrams[this.diagramI]
-        if (!diagram) return
-
-        let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
-  
-        let [position, frets, functions] = diagram.split(':')
-  
-        if (this.isLeftHandedMode) {
-          frets = frets.split('').reverse().join('')
-          functions = functions.split(',').reverse().join()
-          stringNames = stringNames.split(',').reverse().join(',')
-        }
-
-        if (this.shape === 'closed') {
-          frets = frets.split('').map(fret => fret === 'x' ? 'x' : (parseInt(fret) + 1).toString()).join('')
-        }
-
-        this.name = this.catalogQuality
-        this.position = parseInt(position)
-        this.frets = frets
-        this.functions = functions
-        this.fingerings = ''
-        this.strings = this.instruments[this.catalogInstrument].strings
-        this.stringNames = stringNames
+        diagram = this.shapeDiagrams[this.diagramI]
       } else {
-        if (!this.transposedChord) return
-  
-        const diagram = this.transposedChord.diagrams[this.diagramI]
-        if (!diagram) return
-  
-        let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
-  
-        let [position, frets, functions] = diagram.split(':')
-  
-        if (this.isLeftHandedMode) {
-          frets = frets.split('').reverse().join('')
-          functions = functions.split(',').reverse().join()
-          stringNames = stringNames.split(',').reverse().join(',')
-        }
-  
-        this.name = `${this.catalogRoot}${this.catalogQuality}`
-        this.position = parseInt(position)
-        this.frets = frets
-        this.functions = functions
-        this.fingerings = ''
-        this.strings = this.instruments[this.catalogInstrument].strings
-        this.stringNames = stringNames
+        diagram = this.chordDiagrams[this.diagramI].diagram
+        noteNames = this.chordDiagrams[this.diagramI].noteNames
+      }
+
+      if (!diagram) return
+
+      let stringNames = this.transpositions[this.transpositionI].name.split(' ').join(',')
+
+      let [position, frets, functions] = diagram.split(':')
+
+      if (this.isLeftHandedMode) {
+        frets = frets.split('').reverse().join('')
+        functions = functions.split(',').reverse().join()
+        stringNames = stringNames.split(',').reverse().join(',')
+        noteNames = noteNames.split(',').reverse().join(',')
+      }
+
+      if (this.isShapeMode && this.shape === 'closed') {
+        frets = frets.split('').map(fret => fret === 'x' ? 'x' : (parseInt(fret) + 1).toString()).join('')
+      }
+
+      this.name = this.isShapeMode ? this.catalogQuality : this.catalogRoot + this.catalogQuality
+      this.position = parseInt(position)
+      this.frets = frets
+      this.functions = functions
+      this.fingerings = ''
+      this.strings = this.instruments[this.catalogInstrument].strings
+      this.stringNames = stringNames
+
+      if (this.sendNoteNames) {
+        this.noteNames = noteNames
+      } else {
+        this.noteNames = ''
       }
     },
+
+    goToDiagram (increment) {
+      if (!this.catalogQuality) return
+
+      const diagrams = this.isShapeMode ? this.shapeDiagrams : this.chordDiagrams
+      let newI = this.diagramI + increment
+      if (newI < 0) newI = diagrams.length - 1
+      if (newI > diagrams.length - 1) newI = 0
+      this.diagramI = newI
+    },
+
+    goToRootOrShape (increment) {
+      if (this.mode !== 'catalog') return
+
+      if (this.isShapeMode) {
+        this.shape = { open: 'closed', closed: 'open' }[this.shape]
+      } else {
+        const currentI = this.notes.findIndex(note => note.name === this.catalogRoot)
+        let newI = currentI + increment
+        if (newI < 0) newI = this.notes.length - 1
+        if (newI > this.notes.length - 1) newI = 0
+        this.catalogRoot = this.notes[newI].name
+      }
+    },
+
+    goToQuality (increment) {
+      if (this.mode !== 'catalog') return
+      
+      let qualities = []
+      for (const group of this.qualityGroups) qualities = qualities.concat(group.qualities)
+      const currentI = qualities.findIndex(quality => quality.name === this.catalogQuality)
+      let newI = currentI + increment
+      if (newI < 0) newI = qualities.length - 1
+      if (newI > qualities.length - 1) newI = 0
+      this.catalogQuality = qualities[newI].name
+    }
   },
   mounted () {
     try {
       const closedNewsIds = JSON.parse(window.localStorage.getItem('closedNewsIds'))
       this.closedNewsIds = Array.isArray(closedNewsIds) ? closedNewsIds : []
     } catch (err) {}
-  } 
+
+    for (const [keys, handler] of this.mousetrap) Mousetrap.bind(keys, handler)
+  },
+  beforeDestroy () {
+    for (const [keys, handler] of this.mousetrap) Mousetrap.unbind(keys, handler)
+  }
 }
 </script>
 

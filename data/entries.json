@@ -3,6 +3,7 @@
     "ukulele": {
       "strings": 4,
       "semitones": [7, 0, 4, 9],
+      "maxFret": 20,
       "transpositions": [
         ["G C E A", "Standard"],
         ["Ab Db F Bb", null],
@@ -15,18 +16,19 @@
         ["Eb Ab C F", null],
         ["E A C# F#", null],
         ["F Bb D G", null],
-        ["Gb Cb Eb Ab", null]
+        ["F# B D# G#", null]
       ]
     },
     "guitar": {
       "strings": 6,
       "semitones": [4, 9, 2, 7, 11, 4],
+      "maxFret": 35,
       "transpositions": [
         ["E A D G B E", "Standard"],
         ["F Bb Eb Ab C F", null],
         ["F# B E A C# F#", null],
         ["G C F Bb D G", null],
-        ["Ab Db Gb Cb Eb Ab", null],
+        ["G# C# F# B D# G#", null],
         ["A D G C E A", "Guitalele"],
         ["Bb Eb Ab Db F Bb", null],
         ["B E A D F# B", null],

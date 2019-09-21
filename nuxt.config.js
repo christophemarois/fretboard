@@ -15,6 +15,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
     script: [
+      { src: '/js/mousetrap.min.js' },
       { async: true, defer: true, src: 'https://buttons.github.io/buttons.js' },
     ]
   },
@@ -36,6 +37,7 @@ export default {
   */
   plugins: [
     { src: '~/plugins/analytics', ssr: false },
+    { src: '~/plugins/shortkey', ssr: false },
   ],
   /*
   ** Nuxt.js dev-modules
