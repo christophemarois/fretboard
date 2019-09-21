@@ -26,8 +26,9 @@ For a long time, I've wanted a fretboard diagram builder with extensive flexibil
 * Keyboard shortcuts for navigating catalog
 * Note names from catalog
 
-### Known bugs
+### Upcoming / Known bugs
 
+* Manually verify playability of all shapes
 * Bug in rootless note names (e.g. m7b59)
 * Fix error when manual frets are empty
 * Diagram font fixes + fixes to alterations (♯♭)
@@ -39,3 +40,8 @@ For a long time, I've wanted a fretboard diagram builder with extensive flexibil
 * Toggle root for enharmonic alternatives
 * Mobile layout
 * State preservation across refreshes
+
+### Considered
+
+* Mandolin
+* Banjo (would require changes to Vuekulele)
